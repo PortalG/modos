@@ -1,0 +1,11 @@
+[package]
+name = "modos"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies.uefi]
+version = "0.35"
+features = ["alloc", "global_allocator", "logger", "panic_handler"]
+
+[dependencies]
+log = "0.4"
