@@ -1,2 +1,9 @@
+# Cargo.
 /target
+
+# EFI generated file structure.
 /EFI
+
+# Hyper-V drives and cache.
+*.vhdx
+*.avhdx
