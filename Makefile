@@ -12,15 +12,16 @@ arm:
 	-mkdir EFI/BOOT
 	cp "target/aarch64-unknown-uefi/debug/modos.efi" "EFI/BOOT/BOOTAA64.EFI"
 
-
-
 # This will only run on x86 Windows machines with Hyper-V.
 run:
 	sudo make _run
 
 _run: x86
-	-powershell -c "Set-VMVideo -VMName ModOS \
-	-ResolutionType Single -HorizontalResolution 600 -VerticalResolution 1024"
+	-powershell -c "\
+	Set-VMVideo -VMName ModOS -ResolutionType Single \
+	-HorizontalResolution 1024 -VerticalResolution 600; \
+	Set-VMFirmware -VMName ModOS -EnableSecureBoot Off; \
+	Set-VM -Name ModOS -CheckpointType Disabled"
 	-powershell -c "Mount-VHD -Path ModOS.vhdx"
 	-mkdir M:/EFI
 	-mkdir M:/EFI/BOOT
