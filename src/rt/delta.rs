@@ -15,8 +15,8 @@ pub fn calculate_cps() -> u64 {
 }
 
 /// Calculates and returns the delta of time in seconds since the last CPU cycle
-/// from a cycles per second constant, and updates the last CPU cycle referenced
-/// to the current.
+/// with the given cycles per second constant, and updates the last CPU cycle
+/// referenced to the current.
 pub fn calculate_delta(last: &mut u64, cps: u64) -> f64 {
     let current = cycle_count();
     let delta = (current - *last) as f64 / cps as f64;
@@ -24,10 +24,16 @@ pub fn calculate_delta(last: &mut u64, cps: u64) -> f64 {
     delta
 }
 
-/// Performs [`boot::stall`] at a given rate per second while tracking entropy
-/// developed using a given delta.
-pub fn stall(entropy: &mut f64, rate: usize, delta: f64) {
+/// Calculates and returns the current rate per second from the given delta of
+/// time.
+pub fn rate_from_delta(delta: f64) -> usize {
+    (1.0 / delta) as usize
+}
+
+/// Performs [`boot::stall`] at the given rate per second while tracking entropy
+/// developed using the given delta of time.
+pub fn stall(rate: usize, entropy: &mut f64, delta: f64) {
     let target = 1.0 / rate as f64;
-    *entropy += (target - delta).clamp(-target, target);
+    *entropy = (*entropy + target - delta).clamp(-target, target);
     boot::stall(((target + *entropy) * rt::SECOND as f64) as usize);
 }

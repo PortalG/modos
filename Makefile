@@ -1,16 +1,16 @@
 .PHONY: x86 arm run _run
 
 x86:
-	cargo build --target x86_64-unknown-uefi
+	cargo build --target x86_64-unknown-uefi --release
 	-mkdir EFI
 	-mkdir EFI/BOOT
-	cp "target/x86_64-unknown-uefi/debug/modos.efi" "EFI/BOOT/BOOTX64.EFI"
+	cp "target/x86_64-unknown-uefi/release/modos.efi" "EFI/BOOT/BOOTX64.EFI"
 
 arm:
-	cargo build --target aarch64-unknown-uefi
+	cargo build --target aarch64-unknown-uefi --release
 	-mkdir EFI
 	-mkdir EFI/BOOT
-	cp "target/aarch64-unknown-uefi/debug/modos.efi" "EFI/BOOT/BOOTAA64.EFI"
+	cp "target/aarch64-unknown-uefi/release/modos.efi" "EFI/BOOT/BOOTAA64.EFI"
 
 # This will only run on x86 Windows machines with Hyper-V.
 run:

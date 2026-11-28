@@ -3,13 +3,33 @@ name = "modos"
 version = "0.1.0"
 edition = "2024"
 
+license = "MIT"
+readme = "README.md"
+authors = ["Portal (Lewie Boyce)"]
+description = "Modern Mobile Operating System for Senior Project."
+
 [dependencies.uefi]
-version = "0.35"
+version = "0.35" # <- uefi-graphic2 doesn't support v0.36^.
 features = ["alloc", "global_allocator", "logger"]
 
 [dependencies.no_std_time]
 version = "0.16"
 default-features = false
 
+# Will be used later.
+
+# [dependencies.toml]
+# version = "1"
+# features = ["parse", "display", "serde"]
+# default-features = false
+
+# [dependencies.serde]
+# version = "1"
+# features = ["derive", "alloc"]
+# default-features = false
+
 [dependencies]
 log = "0.4"
+libm = "0.2"
+uefi-graphics2 = "0.5"
+embedded-graphics = "0.8" 

@@ -1,14 +1,42 @@
-//! ### The ModOS Runtime
+//! The ModOS Runtime.
 //! 
 //! Manages everything related to the execution life of the operating system.
 
 mod delta; pub use delta::*;
 mod init;  pub use init::*;
-mod error; pub use error::*;
+mod panic;
 
 use uefi::{boot, helpers, println};
 
-/// Defines the amount of microseconds in a single second.
+/// Global handle type that can be initialized as [`None`] at compile-time, and
+/// [`Some`] at runtime.
+pub type Handle<T> = crate::Static<Option<T>>;
+
+impl<T> Handle<T> {
+    /// Returns a temporally invalid [`Handle`] for compile-time initialization. 
+    pub const fn none() -> Self {
+        Handle::new(None)
+    }
+
+    /// Initializes the [`Handle`] to the given value.
+    pub fn init(&self, x: T) {
+        self.overwrite(Some(x));
+    }
+
+    /// Returns a reference to the [`Handle`].
+    pub fn get(&self) -> &T {
+        self.as_ref()
+            .expect("handle is invalid or has not yet been initialized!")
+    }
+
+    /// Returns a mutable reference to the [`Handle`].
+    pub fn get_mut(&self) -> &mut T {
+        self.as_mut().as_mut()
+            .expect("handle is invalid or has not yet been initialized!")
+    }
+}
+
+/// Defines the amount of microseconds in a second.
 pub const SECOND: usize = 1_000_000;
 
 /// Defines the amount of microseconds in a millisecond.
@@ -21,14 +49,14 @@ pub fn preconfig() -> crate::Result<()> {
     Ok(())
 }
 
-/// Used to pause the runtime manually. ONLY FOR DEBUGGING!
-#[deprecated(note =
-    "this function is only for debugging, and as such, \
-    should be removed in production code."
-)]
+/// Used to pause the runtime manually.
+/// 
+/// ONLY FOR DEBUGGING!
+#[deprecated(note = "this function is only for debugging, and as such, should \
+be removed in all prod.")]
 pub fn pause() -> ! {
     println!(
-        "
+"
     --------------------------------------------------
     MODOS RUNTIME HAS BEEN MANUALLY PAUSED.
 
@@ -37,9 +65,9 @@ pub fn pause() -> ! {
     
     AM A DUMBASS.
 
-    SINCERELY, PORTAL.
+    SINCERELY, A DUMBASS.
     --------------------------------------------------
-        "
+"
     );
 
     loop {

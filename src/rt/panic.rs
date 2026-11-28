@@ -1,10 +1,10 @@
 use core::panic::PanicInfo;
-use log::error;
-use uefi::{boot, println};
-use crate::rt;
+use uefi::{boot, println, system};
+use crate::{gfx, rt};
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
+    let _ = system::with_stdout(|x| x.reset(false));
     println!(
 "
     --------------------------------------------------
@@ -16,7 +16,9 @@ fn panic(info: &PanicInfo) -> ! {
     --------------------------------------------------
 "
     );
-    error!("{info}");
+    println!("{info}");
+
+    gfx::panic(info);
     
     loop {
         boot::stall(60 * rt::SECOND);
